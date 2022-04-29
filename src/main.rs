@@ -1,7 +1,8 @@
 use anyhow::*;
 use graphql_client::{GraphQLQuery, Response};
 use serde::Serialize;
-use std::error::Error;
+use std::thread;
+
 
 // The paths are relative to the directory where your `Cargo.toml` is located.
 // Both json and the GraphQL schema language are supported as sources for the schema
@@ -15,25 +16,27 @@ use std::error::Error;
 pub struct Collectors;
 
 
-async fn perform_my_query(variables: collectors::Variables) -> Result<()> {
+fn perform_my_query(variables: collectors::Variables) -> Result<Response<collectors::ResponseData>> {
 
     let request_body = Collectors::build_query(variables);
 
     let indexer = "http://graph-query.sandbox.metaops.solutions/subgraphs/id/QmXuMojFeSY6JdLNapkHQ6BDPRT6WePd9ruA5Jy8sy3nYa";
 
-    let client = reqwest::Client::new();
-    let res = client.post(indexer).json(&request_body).send().await?;
-    let response_body: Response<collectors::ResponseData> = res.json().await?;
-    println!("RESULT: {:#?}", response_body);
-    Ok(())
+    let client = reqwest::blocking::Client::new();
+    let res = client.post(indexer).json(&request_body).send()?;
+    let response_body: Response<collectors::ResponseData> = res.json()?;
+    Ok(response_body)
 }
 
 fn main() {
 
-    let v = collectors::Variables {
-    };
+    let handle = thread::spawn(||
+        for i in 1..100 {
+            println!("Performing query number: {}", i);
+            let v = collectors::Variables {};
+            let result = perform_my_query(v);
+            assert!(result.unwrap().data.is_some());
+        });
 
-    let rt = tokio::runtime::Runtime::new().unwrap();
-    let result = rt.block_on(perform_my_query(v));
-
+    handle.join().expect("The thread was interrupted");
 }
