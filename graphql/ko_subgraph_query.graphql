@@ -1,0 +1,11 @@
+query Collectors {
+    artist(id: "") {
+        id
+    }
+    artists {
+        id
+    }
+    collectors {
+        id
+    }
+}
