@@ -1,11 +1,11 @@
+
 query Collectors {
-    artist(id: "") {
-        id
-    }
-    artists {
-        id
-    }
     collectors {
-        id
+        firstSeen
+        firstPurchaseTimeStamp
+        primaryPurchaseCount
+        secondarySaleCount
+        totalPurchaseCount
     }
 }
+

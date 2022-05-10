@@ -12,6 +12,7 @@ creates a virtual field on the entity that may be queried but cannot be set manu
 """
 directive @derivedFrom(field: String!) on FIELD_DEFINITION
 
+
 type _Block_ {
     """The hash of the block"""
     hash: Bytes
