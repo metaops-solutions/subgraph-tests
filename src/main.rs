@@ -14,13 +14,14 @@ use std::thread;
     response_derives = "Debug"
 )]
 pub struct Collectors;
+type BigInt = String;
 
 
 fn perform_my_query(variables: collectors::Variables) -> Result<Response<collectors::ResponseData>> {
 
     let request_body = Collectors::build_query(variables);
 
-    let indexer = "http://graph-query.sandbox.metaops.solutions/subgraphs/id/QmXuMojFeSY6JdLNapkHQ6BDPRT6WePd9ruA5Jy8sy3nYa";
+    let indexer = "http://graph-query.sandbox.metaops.solutions/subgraphs/id/QmR9KwZHUsqraD5Tjcao6VknQL8Dwx7ZuCp2KmPism717N";
 
     let client = reqwest::blocking::Client::new();
     let res = client.post(indexer).json(&request_body).send()?;
